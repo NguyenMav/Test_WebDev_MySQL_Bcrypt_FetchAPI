@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register and Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .tutorial-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        .feature-info {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!--Register and Login Feature-->
+    <div class="container">
+        <h1 class="display-2"><strong>User Authentication</strong></h1>
+        <h3 class="display-6"><strong>Register</strong></h3>
+        <form id="register-form" method="post" action="/register" novalidate>
+            <div class="mb-3 row">
+                <label for="reg-username" class="form-label col-sm-2">Username:</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="reg-username" name="username" placeholder="Enter username" required minlength="6">
+                    <div class="invalid-feedback">Username must be at least 6 characters long.</div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="reg-password" class="form-label col-sm-2">Password:</label>
+                <div class="col-sm-5">
+                    <input type="password" class="form-control" id="reg-password" name="password" placeholder="Enter password" required minlength="6">
+                    <div class="invalid-feedback">Password must be at least 6 characters long.</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="reset" class="btn btn-primary">Reset</button>
+                </div>
+            </div>
+        </form>
+        <h3 class="display-6 mt-5"><strong>Login</strong></h3>
+        <form id="login-form" method="post" action="/login" novalidate>
+            <div class="mb-3 row">
+                <label for="login-id" class="form-label col-sm-2">ID:</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="login-id" name="id" placeholder="Enter user ID" required>
+                    <div class="invalid-feedback">Please enter user ID.</div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="login-username" class="form-label col-sm-2">Username:</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="login-username" name="username" placeholder="Enter username" required minlength="6">
+                    <div class="invalid-feedback">Username must be at least 6 characters long.</div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="login-password" class="form-label col-sm-2">Password:</label>
+                <div class="col-sm-5">
+                    <input type="password" class="form-control" id="login-password" name="password" placeholder="Enter password" required minlength="6">
+                    <div class="invalid-feedback">Password must be at least 6 characters long.</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="reset" class="btn btn-primary">Reset</button>
+                </div>
+            </div>
+        </form>
+        <!--Display accounts list-->
+        <div class="row mt-5">
+            <div class="col-sm-10">
+                <button type="button" class="btn btn-success" onclick="location.href='account_list.html'">Account List Display</button>
+            </div>
+        </div>
+    </div>
+    <!--Dynamic Content from JSON data provided by a remote API-->
+    <div class="container">
+        <div class="row mt-5">
+            <h3 class="display-6 mt-5"><strong>Random Dog Images From Remote Websever</strong></h3>
+            <div id="dog-image-container"></div>
+        </div>
+    </div>
+    <!--Simple tutorial as requested-->
+    <div class="container">
+        <div class="tutorial-section mt-5">
+            <h2 class="mb-4">Tutorial: Setting Up MySQL2 Database, Using bcrypt for Secure User Authentication and Dynamic Content via remote webserver</h2>
+            <p>Here's a summary of the features implemented in the website:</p>
+            <ul>
+                <li>User Registration with bcrypt Hashing</li>
+                <li>User Login with bcrypt Hashing</li>
+                <li>Alternate Permanent Database called MySQL2</li>
+                <li>Random Dog Image Through Remote Webserver JSON</li>
+            </ul>
+            <!--Instructions for setting up database-->
+            <h3 class="mt-5">Setting Up the MySQL2 Database:</h3>
+            <p>First, let's set up the MySQL database. Follow these steps:</p>
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">It's very important that you have installed MySQL server first. Then you install the MySQL2 Package in your chosen directory:</li>
+                <pre><code class="language-bash">
+                    npm install mysql2</code></pre>
+                <li class="list-group-item">Create a New JavaScript File, e.g., <code>createDB.js</code>, your password for the MySQL server is whatever you set it up as:</li>
+                <pre><code class="language-javascript">
+                    // createDB.js
+                    const mysql = require('mysql2');
+            
+                    const connection = mysql.createConnection({
+                        host: 'localhost',
+                        user: 'root',
+                        password: ''
+                    });
+            
+                    connection.connect(err => {
+                        if (err) throw err;
+                        console.log('Connected to MySQL server!');
+            
+                        // Create database
+                        connection.query('CREATE DATABASE IF NOT EXISTS users_db', (err) => {
+                            if (err) throw err;
+                            console.log('Database created or already exists.');
+            
+                            // Use the database
+                            connection.query('USE users_db', (err) => {
+                                if (err) throw err;
+            
+                                // Create users table
+                                const createTableQuery = `
+                                    CREATE TABLE IF NOT EXISTS users (
+                                        id INT AUTO_INCREMENT PRIMARY KEY,
+                                        username VARCHAR(255) UNIQUE,
+                                        password VARCHAR(255)
+                                    )
+                                `;
+                                connection.query(createTableQuery, (err) => {
+                                    if (err) throw err;
+                                    console.log('Table created or already exists.');
+                                    connection.end();
+                                });
+                            });
+                        });
+                    });
+                </code></pre>
+                <li class="list-group-item">Run the <code>createDB.js</code> File to Create the Database and Users Table. You only need to do this once:</li>
+                <pre><code class="language-bash">
+                    node createDB.js</code></pre>
+            </ol>
+            <!--Instructions for user bcrypt-->
+            <h3 class="mt-5">Implementing bcrypt for Secure User Authentication:</h3>
+            <p>Now, let's implement bcrypt for secure user authentication in your Node.js application with MySQL. Here's how:</p>
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">Install Express.js, MySQL2, and bcrypt Packages in your Node.js Project:</li>
+                <pre><code class="language-bash">
+                    npm install express mysql2 bcrypt</code></pre>
+                <p>This command installs the Express.js framework for building web applications, the MySQL2 package for interacting with MySQL databases, and the bcrypt package for hashing passwords. Note: If you have already downloaded MySQL2, then you don't have to install it again.</p>
+                <li class="list-group-item">Require Express.js, bcrypt, MySQL2, and other necessary modules in your Node.js application. This code will be added in step 4:</li>
+                <pre><code class="language-javascript">
+                    // Require necessary modules
+                    const express = require('express');
+                    const mysql = require('mysql2');
+                    const bcrypt = require('bcrypt');
+                </code></pre>
+                <p>This ensures that you can use these modules in your application.</p>
+                <li class="list-group-item">Create an <code>index.js</code> file to serve as the entry point for your Node.js application:</li>
+                <pre><code class="language-bash">
+                    touch index.js</code></pre>
+                <p>This command creates a new JavaScript file named <code>index.js</code>.</p>
+                <li class="list-group-item">Write the necessary code in <code>index.js</code> to set up the server, handle routes, and interact with the database.</li>
+                <pre><code class="language-javascript">
+                    // index.js
+                    const express = require('express');
+                    const mysql = require('mysql2');
+                    const bcrypt = require('bcrypt');
+            
+                    const app = express();
+                    app.use(express.json());
+            
+                    const connection = mysql.createConnection({
+                        host: 'localhost',
+                        user: 'root',
+                        password: '',
+                        database: 'users_db'
+                    });
+            
+                    connection.connect(err => {
+                        if (err) throw err;
+                        console.log('Connected to MySQL server!');
+                    });
+            
+                    // User registration route
+                    app.post('/register', async (req, res) => {
+                        const { username, password } = req.body;
+                        try {
+                            const hashedUsername = await bcrypt.hash(username, 10);
+                            const hashedPassword = await bcrypt.hash(password, 10);
+            
+                            connection.query('INSERT INTO users (username, password) VALUES (?, ?)', 
+                            [hashedUsername, hashedPassword], (err, results) => {
+                                if (err) {
+                                    return res.status(400).send('Username already exists');
+                                }
+                                res.status(201).send('User registered successfully');
+                            });
+                        } catch (err) {
+                            res.status(500).send('Error registering user');
+                        }
+                    });
+            
+                    // User login route
+                    app.post('/login', async (req, res) => {
+                        const { id, username, password } = req.body;
+                        connection.query('SELECT * FROM users WHERE id = ?', [id], async (err, results) => {
+                            if (err) {
+                                console.error('Database error:', err);
+                                return res.status(500).send('Error logging in');
+                            }
+                            const user = results[0];
+                            if (user && await bcrypt.compare(username, user.username) && await bcrypt.compare(password, user.password)) {
+                                res.status(200).send('Login successful');
+                            } else {
+                                res.status(400).send('Invalid username or password');
+                            }
+                        });
+                    });
+            
+                    app.listen(3000, () => {
+                        console.log('Server is running on port 3000');
+                    });
+                </code></pre>
+                <p>In this file, you'll define routes for user registration, login, and other functionalities.</p>
+                <li class="list-group-item">Run the Node.js application by executing the following command in your terminal:</li>
+                <pre><code class="language-bash">
+                    node index.js</code></pre>
+                <p>This command starts the server, and your application will be accessible at the specified port.</p>
+                <li class="list-group-item">During user registration, hash the provided username and password using bcrypt before storing them in the database:</li>
+                <pre><code class="language-javascript">
+                    // User registration example
+                    const { username, password } = req.body;
+                    const hashedUsername = await bcrypt.hash(username, 10);
+                    const hashedPassword = await bcrypt.hash(password, 10);
+            
+                    connection.query('INSERT INTO users (username, password) VALUES (?, ?)', 
+                    [hashedUsername, hashedPassword], (err, results) => {
+                        if (err) {
+                            return res.status(400).send('Username already exists');
+                        }
+                        res.status(201).send('User registered successfully');
+                    });
+                </code></pre>
+                <p>Replace <code>username</code> and <code>password</code> with the actual values obtained from the registration form.</p>
+                <li class="list-group-item">Store the hashed username and password in the MySQL database.</li>
+                <li class="list-group-item">During user login, retrieve the user data from the database based on the provided ID and compare the hashed credentials:</li>
+                <pre><code class="language-javascript">
+                    // User login example
+                    const { id, username, password } = req.body;
+                    connection.query('SELECT * FROM users WHERE id = ?', [id], async (err, results) => {
+                        if (err) {
+                            console.error('Database error:', err);
+                            return res.status(500).send('Error logging in');
+                        }
+                        const user = results[0];
+                        if (user && await bcrypt.compare(username, user.username) && await bcrypt.compare(password, user.password)) {
+                            res.status(200).send('Login successful');
+                        } else {
+                            res.status(400).send('Invalid username or password');
+                        }
+                    });
+                </code></pre>
+                <p>Replace <code>id</code>, <code>username</code>, and <code>password</code> with the actual values obtained from the login form.</p>
+            </ol>
+            <!-- Instructions for fetching data from remote API -->
+            <h3 class="mt-5">Fetching Data from Remote Webserver:</h3>
+            <p>This <code>div</code> element will serve as the container for the random dog images fetched from the remote web server.</p>
+            <ol class="list-group list-group-numbered">
+            <li class="list-group-item">Create a <code>div</code> element with a unique <code>id</code> to hold the fetched images:</li>
+            <pre><code class="language-html">
+                &lt;div id="remote-dog-image-container"&gt;&lt;/div&gt;</code></pre>
+            <br>
+            <p>To fetch data from a remote web server using JavaScript, you can use the Fetch API. Here's how:</p>
+                <li class="list-group-item">Use the Fetch API to make a GET request to the remote API endpoint:</li>
+                <pre><code class="language-javascript">
+                    fetch('https://dog.ceo/api/breeds/image/random')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Handle the JSON response data here
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });</code></pre>
+                <li class="list-group-item">Process the JSON response data:</li>
+                <pre><code class="language-javascript">
+                    .then(data => {
+                        const dogImageURL = data.message;
+                        // Use the data to update your webpage
+                    })</code></pre>
+                <li class="list-group-item">Display the fetched data on your webpage:</li>
+                <pre><code class="language-javascript">
+                    .then(data => {
+                        const dogImageURL = data.message;
+                        const dogImageContainer = document.getElementById('remote-dog-image-container');
+                        const imgElement = document.createElement('img');
+                        imgElement.src = dogImageURL;
+                        imgElement.alt = 'Random Dog Image';
+                        imgElement.classList.add('img-fluid', 'mt-3');
+                        dogImageContainer.appendChild(imgElement);
+                    })</code></pre>
+            </ol>
+        </div>
+    </div>
+
+    <footer class="container-fluid text-center mt-4 p-2 bg-dark text-white">
+        <p>&copy; 2024 Maverick Nguyen</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        // User Register Validation
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            var usernameInput = document.getElementById('reg-username');
+            var passwordInput = document.getElementById('reg-password');
+            if (usernameInput.value.length < 6 || passwordInput.value.length < 6) {
+                event.preventDefault();
+                if (usernameInput.value.length < 6) {
+                    usernameInput.classList.add('is-invalid');
+                } else {
+                    usernameInput.classList.remove('is-invalid');
+                }
+                if (passwordInput.value.length < 6) {
+                    passwordInput.classList.add('is-invalid');
+                } else {
+                    passwordInput.classList.remove('is-invalid');
+                }
+            }
+        });
+        // User Login Validation
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            var usernameInput = document.getElementById('login-username');
+            var passwordInput = document.getElementById('login-password');
+            if (usernameInput.value.length < 6 || passwordInput.value.length < 6) {
+                event.preventDefault();
+                if (usernameInput.value.length < 6) {
+                    usernameInput.classList.add('is-invalid');
+                } else {
+                    usernameInput.classList.remove('is-invalid');
+                }
+                if (passwordInput.value.length < 6) {
+                    passwordInput.classList.add('is-invalid');
+                } else {
+                    passwordInput.classList.remove('is-invalid');
+                }
+            }
+        });
+        // Fetch remote API
+        fetch('https://dog.ceo/api/breeds/image/random')
+            .then(response => response.json())
+            .then(data => {
+                const dogImageURL = data.message;
+                const dogImageContainer = document.getElementById('dog-image-container');
+                const imgElement = document.createElement('img');
+                imgElement.src = dogImageURL;
+                imgElement.alt = 'Random Dog Image';
+                imgElement.classList.add('img-fluid', 'mt-3');
+                dogImageContainer.appendChild(imgElement);
+            })
+            .catch(error => {
+                console.error('Error fetching dog image:', error);
+            });
+    </script>
+</body>
+</html>
