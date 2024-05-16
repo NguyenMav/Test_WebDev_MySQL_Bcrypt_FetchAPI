@@ -12,4 +12,6 @@ So for this to work, you must first do this:
 
 5. Make sure you have MySQL server downloaded and change the database connection password to whatever you set.
 
-6. That's it! I hope you know what else to do from here. Just run 'node index.js' once everything has been adjusted for you.
+6. Then run 'node createDB.js' to make a database and table in MySQL server.
+
+7. That's it! I hope you know what else to do from here. Just run 'node index.js' once everything has been adjusted for you.
